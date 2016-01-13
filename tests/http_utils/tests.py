@@ -69,3 +69,9 @@ class HttpUtilTests(SimpleTestCase):
         res = StreamingHttpResponse(['abc'])
         conditional_content_removal(req, res)
         self.assertEqual(b''.join(res), b'')
+
+        # Ensure Content-Length is not set to 0
+        # to comply with RFC 7230, section 3.3.2
+        res = HttpResponse(status=204)
+        conditional_content_removal(req, res)
+        self.assertNotIn('Content-Length', res)
